@@ -29,20 +29,31 @@
             <details class="invite" @if ($errors->has('email')) open @endif>
                 <summary class="btn">Invite</summary>
                 <div class="invite-box">
-                    <label for="invite-link" class="small"><strong>Invite link</strong></label>
-                    <input id="invite-link" type="text" readonly value="{{ route('projects.join', $project->invite_code) }}" onfocus="this.select()">
-                    <button type="button" class="btn btn-sm" data-copy="#invite-link">Copy link</button>
-                    <p class="muted small">Anyone who opens this link and logs in or signs up joins this project.</p>
-
-                    <form method="POST" action="{{ route('projects.members.store', $project) }}" class="invite-form">
+                    <form method="POST" action="{{ route('projects.members.store', $project) }}" class="invite-form invite-form-first">
                         @csrf
-                        <label for="invite-email" class="small"><strong>Or add someone who already has an account</strong></label>
+                        <label for="invite-email" class="small"><strong>Invite by email</strong></label>
                         <input id="invite-email" type="email" name="email" value="{{ old('email') }}" placeholder="their@email.com" required>
                         @error('email') <small class="error">{{ $message }}</small> @enderror
-                        <button type="submit" class="btn btn-sm">Add to project</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Send invitation</button>
+                        <p class="muted small">If they already have an account they are added right away and notified. Otherwise they get an email with a link to join.</p>
                     </form>
+
+                    <label for="invite-link" class="small invite-divider"><strong>Or share the invite link</strong></label>
+                    <input id="invite-link" type="text" readonly value="{{ route('projects.join', $project->invite_code) }}" onfocus="this.select()">
+                    <button type="button" class="btn btn-sm" data-copy="#invite-link">Copy link</button>
+
+                    @if ($isOwner)
+                        <form method="POST" action="{{ route('projects.invite.reset', $project) }}" class="invite-form"
+                              onsubmit="return confirm('Reset the invite link? The current link will stop working.')">
+                            @csrf
+                            <p class="muted small">Shared the link with the wrong person? Reset it and the old one stops working.</p>
+                            <button type="submit" class="btn btn-danger btn-sm">Reset invite link</button>
+                        </form>
+                    @endif
                 </div>
             </details>
+
+            <a href="{{ route('projects.chat', $project) }}" class="btn">Chat</a>
 
             <a href="{{ route('tasks.create', ['project' => $project->id]) }}" class="btn btn-primary">New task</a>
         </div>
@@ -141,6 +152,11 @@
                 <a class="add-link" href="{{ route('tasks.create', ['project' => $project->id, 'status' => $key]) }}">+ Add task</a>
             </section>
         @endforeach
+    </div>
+
+    <div class="project-links">
+        <a href="{{ route('projects.activity', $project) }}" class="btn btn-sm">Activity history</a>
+        <a href="{{ route('projects.export', $project) }}" class="btn btn-sm">Export tasks (CSV)</a>
     </div>
 
     <section class="panel" id="members">

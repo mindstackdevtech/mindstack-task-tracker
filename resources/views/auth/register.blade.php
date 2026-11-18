@@ -22,14 +22,14 @@
 
         <label class="field">
             <span>Password</span>
-            <input type="password" name="password" required autocomplete="new-password">
-            <small class="muted">At least 8 characters.</small>
+            <input type="password" name="password" required minlength="8" autocomplete="new-password">
+            <small class="muted">{{ \App\Support\Security::PASSWORD_HINT }}</small>
             @error('password') <small class="error">{{ $message }}</small> @enderror
         </label>
 
         <label class="field">
             <span>Confirm password</span>
-            <input type="password" name="password_confirmation" required autocomplete="new-password">
+            <input type="password" name="password_confirmation" required minlength="8" autocomplete="new-password">
         </label>
 
         <button type="submit" class="btn btn-primary btn-block">Create account</button>

@@ -20,10 +20,13 @@
             @error('password') <small class="error">{{ $message }}</small> @enderror
         </label>
 
-        <label class="check">
-            <input type="checkbox" name="remember" value="1">
-            <span>Keep me logged in</span>
-        </label>
+        <div class="auth-row">
+            <label class="check">
+                <input type="checkbox" name="remember" value="1">
+                <span>Keep me logged in</span>
+            </label>
+            <a href="{{ route('password.request') }}">Forgot your password?</a>
+        </div>
 
         <button type="submit" class="btn btn-primary btn-block">Log in</button>
     </form>

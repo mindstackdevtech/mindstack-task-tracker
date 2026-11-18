@@ -6,6 +6,7 @@ use App\Models\Activity;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Support\Notifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -162,17 +163,46 @@ class TaskController extends Controller
             : 'moved "'.$task->title.'" to '.$task->statusLabel();
 
         Activity::record($task->project_id, $description, $task);
+
+        // Let the person who created the task know it is finished.
+        if ($task->status === 'done' && $task->created_by && (int) $task->created_by !== (int) auth()->id()) {
+            $creator = User::find($task->created_by);
+
+            if ($creator) {
+                Notifier::send(
+                    $creator,
+                    '"'.$task->title.'" is done',
+                    auth()->user()->name.' completed a task you created.',
+                    route('tasks.show', $task),
+                );
+            }
+        }
     }
 
-    /** Notes in the activity feed when a task is given to someone else. */
+    /** When a task is given to someone else: activity feed, bell and email. */
     private function recordAssignment(Task $task): void
     {
         if ($task->assigned_to === null || (int) $task->assigned_to === (int) auth()->id()) {
             return;
         }
 
-        $name = Str::before((string) User::find($task->assigned_to)?->name, ' ');
-        Activity::record($task->project_id, 'assigned "'.$task->title.'" to '.$name, $task);
+        $assignee = User::find($task->assigned_to);
+
+        if ($assignee === null) {
+            return;
+        }
+
+        Activity::record($task->project_id, 'assigned "'.$task->title.'" to '.Str::before($assignee->name, ' '), $task);
+
+        $project = Project::find($task->project_id);
+        $due = $task->due_date ? ' It is due '.$task->due_date->format('M j, Y').'.' : '';
+
+        Notifier::send(
+            $assignee,
+            'New task: '.$task->title,
+            auth()->user()->name.' assigned you a task in '.($project?->name ?? 'a project').'.'.$due,
+            route('tasks.show', $task),
+        );
     }
 
     private function labels(int $projectId)
