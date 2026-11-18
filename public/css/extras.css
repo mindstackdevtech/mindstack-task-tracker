@@ -255,3 +255,31 @@
 .mention.mention-me { background: var(--text); color: var(--accent-ink); }
 .msg.mentions-me .msg-bubble { border-color: var(--text); }
 .chat-hint { margin: 0; }
+
+/* ---------- Personal messages: list of conversations ---------- */
+.thread-list { padding: 4px 20px; }
+.thread { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-top: 1px solid var(--border); }
+.thread:first-child { border-top: 0; }
+.thread:hover { text-decoration: none; }
+.thread:hover .row-title { text-decoration: underline; }
+.thread-text { flex: 1; min-width: 0; }
+.thread-preview { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.thread.unread .thread-preview { color: var(--text); font-weight: 600; }
+.thread-badge {
+    flex: none;
+    min-width: 24px;
+    padding: 1px 8px;
+    border-radius: 99px;
+    background: var(--danger);
+    color: #0b0d0c;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    /* Six tabs in the bottom bar. */
+    .nav a { font-size: 10px; padding: 4px 1px; }
+    .nav a svg { width: 20px; height: 20px; }
+    .thread-list { padding: 4px 16px; }
+}

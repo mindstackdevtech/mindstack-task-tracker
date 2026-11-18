@@ -13,13 +13,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/extras.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/polish.css') }}">
 </head>
 <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     {{-- Layout for About us and Contact us. Works logged in or logged out. --}}
     <div class="public-page">
         @include('partials.public-nav', ['brand' => true])
 
-        <main class="public-main">
+        <main class="public-main" id="main">
             @if (session('status'))
                 <div class="flash" role="status">{{ session('status') }}</div>
             @endif
@@ -29,5 +31,6 @@
 
         @include('partials.public-footer')
     </div>
+    <script src="{{ asset('js/ui.js') }}" defer></script>
 </body>
 </html>

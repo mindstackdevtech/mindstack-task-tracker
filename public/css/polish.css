@@ -1,0 +1,199 @@
+/* MindStack Task Tracker — UI polish layer.
+   Loaded last. It only refines how things look and respond;
+   delete the <link> to this file in the layouts to switch it all off. */
+
+/* ---------- Base feel ---------- */
+html { scroll-behavior: smooth; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+* { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; border: 2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: #5c605e; }
+
+/* Jump straight to the page content with the keyboard. */
+.skip-link {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 100;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--text);
+    color: var(--accent-ink);
+    font-weight: 600;
+    transform: translateY(-200%);
+}
+.skip-link:focus { transform: none; }
+
+/* ---------- Page loading bar (shown by ui.js while the next page loads) ---------- */
+.load-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
+    height: 3px;
+    width: 0;
+    background: var(--text);
+    opacity: 0;
+    pointer-events: none;
+}
+.load-bar.on { opacity: 1; width: 85%; transition: width 6s cubic-bezier(0.1, 0.7, 0.2, 1), opacity 0.15s; }
+
+/* ---------- Buttons ---------- */
+.btn, .chip, .icon-btn, .link-btn {
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s, transform 0.08s;
+}
+.btn:active, .chip:active { transform: translateY(1px); }
+.btn-primary:hover { box-shadow: 0 6px 18px rgba(244, 244, 244, 0.14); }
+.btn-danger:hover { background: var(--danger); color: #0b0d0c; border-color: var(--danger); }
+.btn:disabled, .btn[aria-busy="true"] { opacity: 0.65; cursor: progress; }
+
+/* Small spinner on the button that was just pressed. */
+.btn[aria-busy="true"]::after {
+    content: "";
+    width: 14px;
+    height: 14px;
+    margin-left: 8px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 99px;
+    animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Fields ---------- */
+input[type="text"], input[type="email"], input[type="password"],
+input[type="date"], input[type="search"], select, textarea {
+    transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+input[type="text"]:hover, input[type="email"]:hover, input[type="password"]:hover,
+input[type="date"]:hover, input[type="search"]:hover, select:hover, textarea:hover { border-color: #5c605e; }
+input::placeholder, textarea::placeholder { color: #7d817f; }
+.field:focus-within > span { color: var(--text); }
+
+/* Show / hide password (the button is added by ui.js). */
+.pw-wrap { position: relative; display: block; }
+.pw-wrap input { padding-right: 76px; }
+.pw-toggle {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    min-height: 32px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.pw-toggle:hover { color: var(--text); background: var(--surface-2); }
+
+/* ---------- Messages at the top of a page ---------- */
+.flash {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-left: 3px solid var(--text);
+    animation: rise 0.25s ease both;
+    transition: opacity 0.3s, transform 0.3s;
+}
+.flash.hide { opacity: 0; transform: translateY(-6px); }
+.flash-close {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+.flash-close:hover { background: var(--surface); color: var(--text); }
+
+/* ---------- Cards, panels and lists ---------- */
+.card, .stat, .task, .column, .panel, .team-card, .cal-day {
+    transition: border-color 0.15s, box-shadow 0.2s, transform 0.15s, background-color 0.15s;
+}
+.card:hover, a.stat:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45); }
+.task:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); }
+.task.dragging { transform: rotate(2deg) scale(1.02); box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6); }
+.column.over { background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--text); }
+
+.row, .notif, .activity, .member-row { transition: background-color 0.15s; }
+a.row:hover, a.notif:hover {
+    background: var(--surface-2);
+    margin-left: -10px;
+    margin-right: -10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 8px;
+}
+.table tbody tr { transition: background-color 0.15s; }
+.table tbody tr:hover { background: var(--surface-2); }
+
+.bar span { transition: width 0.5s ease; }
+.avatar { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06); }
+
+/* Empty states read as a calm note, not an error. */
+.panel > .empty, .chat-list > .empty { text-align: center; padding: 28px 12px; }
+
+/* ---------- Menu ---------- */
+.nav a { transition: background-color 0.15s, color 0.15s; }
+.brand img { transition: opacity 0.15s; }
+.brand:hover img { opacity: 0.85; }
+
+/* ---------- Content eases in when a page opens ---------- */
+.main > *, .public-main > *, .auth-card > * { animation: rise 0.3s ease both; }
+.main > *:nth-child(2), .public-main > *:nth-child(2) { animation-delay: 0.04s; }
+.main > *:nth-child(3), .public-main > *:nth-child(3) { animation-delay: 0.08s; }
+.main > *:nth-child(n + 4), .public-main > *:nth-child(n + 4) { animation-delay: 0.12s; }
+@keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+}
+
+/* The invite box must stay above the page while it is open. */
+.page-head { position: relative; z-index: 5; animation: none; }
+
+/* ---------- Clear keyboard focus everywhere ---------- */
+a:focus-visible, button:focus-visible, summary:focus-visible, .card:focus-visible, .task-title:focus-visible {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+    border-radius: 6px;
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 900px) {
+    /* A line above the current tab in the bottom bar. */
+    .nav a { position: relative; }
+    .nav a.active::before {
+        content: "";
+        position: absolute;
+        top: -6px;
+        left: 28%;
+        right: 28%;
+        height: 3px;
+        border-radius: 0 0 3px 3px;
+        background: var(--text);
+    }
+    .nav { box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.5); }
+
+    /* No lift on touch screens, where hover sticks after a tap. */
+    .card:hover, a.stat:hover, .task:hover { transform: none; box-shadow: none; }
+    a.row:hover, a.notif:hover { margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; background: transparent; }
+}
+
+/* ---------- Respect "reduce motion" in the device settings ---------- */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+}

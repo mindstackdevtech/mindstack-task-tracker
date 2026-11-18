@@ -7,6 +7,7 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DirectMessageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PasswordResetController;
@@ -61,6 +62,12 @@ Route::middleware(SecurityHeaders::class)->group(function () {
 
         // Calendar of due dates
         Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+
+        // Personal messages between two people
+        Route::get('/messages', [DirectMessageController::class, 'index'])->name('messages.index');
+        Route::get('/messages/{user}', [DirectMessageController::class, 'show'])->name('messages.show');
+        Route::get('/messages/{user}/feed', [DirectMessageController::class, 'feed'])->name('messages.feed');
+        Route::post('/messages/{user}', [DirectMessageController::class, 'store'])->middleware('throttle:30,1')->name('messages.store');
 
         Route::resource('projects', ProjectController::class)->except(['create', 'edit']);
 

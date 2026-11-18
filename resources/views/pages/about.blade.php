@@ -13,6 +13,16 @@
     if (count($nameParts) > 1) {
         $devInitials .= mb_strtoupper(mb_substr($nameParts[count($nameParts) - 1], 0, 1));
     }
+
+    // YOUR PICTURE: save it in public/images as developer.jpg (or .png, .jpeg, .webp).
+    // If no such file exists, your initials are shown instead.
+    $devPhoto = null;
+    foreach (['jpg', 'jpeg', 'png', 'webp'] as $extension) {
+        if (file_exists(public_path('images/developer.'.$extension))) {
+            $devPhoto = asset('images/developer.'.$extension);
+            break;
+        }
+    }
 @endphp
 
 @section('content')
@@ -59,7 +69,11 @@
         <h2>The developer behind it</h2>
 
         <div class="dev-card">
-            <span class="team-avatar avatar-1" aria-hidden="true">{{ $devInitials }}</span>
+            @if ($devPhoto)
+                <img class="dev-photo" src="{{ $devPhoto }}" alt="{{ $devName }}">
+            @else
+                <span class="team-avatar avatar-1" aria-hidden="true">{{ $devInitials }}</span>
+            @endif
             <div class="dev-info">
                 <h3>{{ $devName }}</h3>
                 <p class="team-role">{{ $dev['role'] ?? 'Developer' }} · MindStack Dev &amp; Tech</p>

@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="{{ asset('images/icon.png') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/extras.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/polish.css') }}">
 </head>
 <body>
     <main class="auth-wrap">

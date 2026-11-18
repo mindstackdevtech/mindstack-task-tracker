@@ -13,10 +13,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('css/extras.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/polish.css') }}">
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 @auth
-    @php $unreadCount = auth()->user()->unreadNotifications()->count(); @endphp
+    @php
+        $unreadCount = auth()->user()->unreadNotifications()->count();
+
+        // Unread personal messages. If the table is missing (php artisan migrate
+        // has not been run yet) the menu simply shows no number.
+        try {
+            $unreadMessages = \App\Models\DirectMessage::where('recipient_id', auth()->id())->whereNull('read_at')->count();
+        } catch (\Throwable $e) {
+            $unreadMessages = 0;
+        }
+    @endphp
 
     <div class="shell">
         <aside class="sidebar">
@@ -43,6 +55,13 @@
                 <a href="{{ route('calendar.index') }}" @class(['active' => request()->routeIs('calendar.*')])>
                     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></svg>
                     <span>Calendar</span>
+                </a>
+                <a href="{{ route('messages.index') }}" @class(['nav-bell', 'active' => request()->routeIs('messages.*')])>
+                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>
+                    <span>Messages</span>
+                    @if ($unreadMessages > 0)
+                        <b class="nav-badge" aria-label="{{ $unreadMessages }} unread">{{ $unreadMessages > 99 ? '99+' : $unreadMessages }}</b>
+                    @endif
                 </a>
                 <a href="{{ route('notifications.index') }}" @class(['nav-bell', 'active' => request()->routeIs('notifications.*')])>
                     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg>
@@ -73,7 +92,7 @@
             </div>
         </aside>
 
-        <main class="main">
+        <main class="main" id="main">
             @if (session('status'))
                 <div class="flash" role="status">{{ session('status') }}</div>
             @endif
@@ -85,7 +104,7 @@
     <div class="public-page">
         @include('partials.public-nav', ['brand' => false])
 
-        <main class="auth-wrap">
+        <main class="auth-wrap" id="main">
             <div class="auth-card">
                 <img class="auth-logo" src="{{ asset('images/logo.png') }}" alt="MindStack Task Tracker">
 
@@ -101,6 +120,7 @@
     </div>
 @endauth
 
+<script src="{{ asset('js/ui.js') }}" defer></script>
 @stack('scripts')
 </body>
 </html>

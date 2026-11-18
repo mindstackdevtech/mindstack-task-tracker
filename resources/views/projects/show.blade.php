@@ -174,6 +174,10 @@
                 </div>
                 <span class="pill">{{ $member->pivot->role === 'owner' ? 'Owner' : 'Member' }}</span>
 
+                @if ($member->id !== auth()->id())
+                    <a href="{{ route('messages.show', $member) }}" class="btn btn-sm">Message</a>
+                @endif
+
                 @if ($member->pivot->role !== 'owner' && ($isOwner || $member->id === auth()->id()))
                     <form method="POST" action="{{ route('projects.members.destroy', [$project, $member]) }}"
                           onsubmit="return confirm('{{ $member->id === auth()->id() ? 'Leave this project?' : 'Remove this member from the project?' }}')">
