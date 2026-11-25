@@ -15,13 +15,13 @@ return [
         'about' => 'Designed and built MindStack Task Tracker.',
 
         // Your GitHub profile, for example https://github.com/your-username
-        'github' => 'https://github.com/your-username',
+        'github' => 'https://github.com/sleepysuil',
 
         // The email address people can write to
-        'email' => 'your-email@example.com',
+        'email' => 'francisluis129@gmail.com',
 
         // Your Facebook profile or page, for example https://facebook.com/your-page
-        'facebook' => 'https://facebook.com/your-page',
+        'facebook' => 'https://facebook.com/franc1sssssssss',
     ],
 
 ];
